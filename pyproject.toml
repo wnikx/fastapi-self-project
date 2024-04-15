@@ -12,6 +12,7 @@ python-dotenv = "^1.0.1"
 pytest = "^8.1.1"
 sqlalchemy = "^2.0.29"
 ruff = "^0.3.7"
+asyncpg = "^0.29.0"
 
 
 [build-system]
