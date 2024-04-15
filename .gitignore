@@ -1,0 +1,6 @@
+# ruff linter
+.ruff_cache/
+ruff.toml
+
+# pycache files
+__pycache__/
