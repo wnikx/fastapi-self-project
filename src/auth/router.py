@@ -1,8 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
 
 from src.auth.service import get_check_account_service
 
-auth_router = APIRouter(prefix="/auth/api/v1")
+auth_router = APIRouter(prefix="/auth/api/v1", tags=["Auth"])
 
 
 @auth_router.get("/check_account/{account}")
