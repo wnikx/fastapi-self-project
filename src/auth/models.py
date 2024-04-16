@@ -27,3 +27,11 @@ class Account(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     account_name: Mapped[str]
     created: Mapped[created_at]
+
+
+class Invite(Base):
+    """Таблица со связью инвайта и аккаунта"""
+
+    __tablename__ = "invites"
+
+    id: Mapped[int] = mapped_column(primary_key=True)

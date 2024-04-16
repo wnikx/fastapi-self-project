@@ -1,6 +1,7 @@
 from fastapi import APIRouter, BackgroundTasks
 
 from src.auth.service import get_check_account_service
+from src.auth.utils import generate_token_invate
 
 auth_router = APIRouter(prefix="/auth/api/v1", tags=["Auth"])
 
@@ -9,4 +10,4 @@ auth_router = APIRouter(prefix="/auth/api/v1", tags=["Auth"])
 async def get_check_account(account: str):
     check_account = await get_check_account_service(account)
     if not check_account:
-        pass
+        invite_token = generate_token_invate()
