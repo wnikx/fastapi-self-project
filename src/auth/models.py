@@ -1,22 +1,7 @@
-import datetime
-from typing import Annotated
-
-from sqlalchemy import text
 from sqlalchemy.orm import Mapped, mapped_column
 
+from src.custom_types import created_at, int_pk, updated_at
 from src.models import Base
-
-created_at = Annotated[
-    datetime.datetime,
-    mapped_column(server_default=text("TIMEZONE('utc', now())")),
-]
-updated_at = Annotated[
-    datetime.datetime,
-    mapped_column(
-        server_default=text("TIMEZONE('utc', now())"),
-        onupdate=datetime.datetime.utcnow,
-    ),
-]
 
 
 class Account(Base):
@@ -24,7 +9,7 @@ class Account(Base):
 
     __tablename__ = "accounts"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int_pk]
     account_name: Mapped[str]
     created: Mapped[created_at]
 
@@ -34,4 +19,6 @@ class Invite(Base):
 
     __tablename__ = "invites"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int_pk]
+    account_name: Mapped[str]
+    invite_token: Mapped[str]
