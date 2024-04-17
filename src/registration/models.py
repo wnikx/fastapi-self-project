@@ -1,9 +1,9 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.auth.schema import SignUpSchema
 from src.custom_types import created_at, int_pk, str_256, updated_at
 from src.models import Base
+from src.registration.schema import SignUpSchema
 
 
 class Account(Base):
@@ -67,7 +67,7 @@ class UserAccount(Base):
         ForeignKey("account.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    password: Mapped[int]
+    password: Mapped[str]
 
 
 class UserCompany(Base):
