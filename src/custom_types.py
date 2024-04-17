@@ -1,7 +1,7 @@
 import datetime
 from typing import Annotated
 
-from sqlalchemy import Integer, text
+from sqlalchemy import Integer, String, text
 from sqlalchemy.orm import mapped_column
 
 # pk
@@ -20,3 +20,6 @@ updated_at = Annotated[
         onupdate=datetime.datetime.utcnow,
     ),
 ]
+
+# varchar
+str_256 = Annotated[str, mapped_column(String(length=256))]
