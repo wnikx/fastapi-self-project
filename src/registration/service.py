@@ -22,7 +22,7 @@ async def get_check_account_service(account: str):
 
 async def add_account_with_invite_service(account: str, invite_token: str):
     async with async_session_maker() as session:
-        new_row = Invite(account_name=account, invite_token=invite_token)
+        new_row = Invite(account=account, invite_token=invite_token)
         session.add(new_row)
         await session.commit()
 
@@ -38,14 +38,18 @@ async def check_validation_service(sign_up_data: SignUpSchema):
 async def sign_up_complete_service(data: SignUpCompleteSchema):
     async with async_session_maker() as session:
         new_company = Company(company_name=data.company_name)
-        new_user = User(first_name=data.first_name, last_name=data.last_name)
+        new_user = User(
+            first_name=data.first_name,
+            last_name=data.last_name,
+            password=data.password,
+            account=data.account,
+        )
         new_account = Account(account_name=data.account)
         session.add_all([new_company, new_user, new_account])
         await session.flush()
         new_user_account = UserAccount(
             user_id=new_user.id,
             account_id=new_account.id,
-            password=data.password,
         )
         new_user_company = UserCompany(user_id=new_user.id, company_id=new_company.id)
         new_user_position = UserPosition(user_id=new_user.id, position_id=1)

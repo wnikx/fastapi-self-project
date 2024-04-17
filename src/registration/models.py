@@ -12,7 +12,7 @@ class Account(Base):
     __tablename__ = "account"
 
     id: Mapped[int_pk]
-    account_name: Mapped[str_256]
+    account_name: Mapped[str_256] = None
     created: Mapped[created_at]
 
 
@@ -22,7 +22,7 @@ class Invite(Base):
     __tablename__ = "invite"
 
     id: Mapped[int_pk]
-    account_name: Mapped[str_256]
+    account: Mapped[str_256]
     invite_token: Mapped[str_256]
 
 
@@ -34,6 +34,8 @@ class User(Base):
     id: Mapped[int_pk]
     first_name: Mapped[str_256]
     last_name: Mapped[str_256]
+    password: Mapped[str_256]
+    account: Mapped[str_256]
 
 
 class Company(Base):
@@ -55,7 +57,7 @@ class Position(Base):
 
 
 class UserAccount(Base):
-    """Таблица для хранения информации о связях user-account + хранения пароля"""
+    """Таблица для хранения информации о связях user-account"""
 
     __tablename__ = "user_account"
 
@@ -67,7 +69,6 @@ class UserAccount(Base):
         ForeignKey("account.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    password: Mapped[str]
 
 
 class UserCompany(Base):
