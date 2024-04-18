@@ -1,5 +1,6 @@
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import FastAPI
 
+from src import token_dep
 from src.registration.router import reg_router
 
 app = FastAPI()

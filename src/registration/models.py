@@ -1,5 +1,7 @@
+import enum
+
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.custom_types import created_at, int_pk, str_256, updated_at
 from src.models import Base
@@ -7,12 +9,12 @@ from src.registration.schema import SignUpSchema
 
 
 class Account(Base):
-    """Таблица с информацией о компаниях"""
+    """Таблица с информацией о зарегестрированных e-mail'ах"""
 
     __tablename__ = "account"
 
     id: Mapped[int_pk]
-    account_name: Mapped[str_256] = None
+    email: Mapped[str_256]
     created: Mapped[created_at]
 
 
@@ -22,7 +24,7 @@ class Invite(Base):
     __tablename__ = "invite"
 
     id: Mapped[int_pk]
-    account: Mapped[str_256]
+    email: Mapped[str_256]
     invite_token: Mapped[str_256]
 
 
@@ -34,8 +36,17 @@ class User(Base):
     id: Mapped[int_pk]
     first_name: Mapped[str_256]
     last_name: Mapped[str_256]
-    password: Mapped[str_256]
-    account: Mapped[str_256]
+    hashed_password: Mapped[str_256]
+    email: Mapped[str_256] = mapped_column(unique=True)
+    company_id: Mapped[int] = mapped_column(ForeignKey("company.id", ondelete="CASCADE"))
+    position_id: Mapped[int] = mapped_column(ForeignKey("position.id", ondelete="CASCADE"))
+    role_id: Mapped[int] = mapped_column(ForeignKey("role.id", ondelete="CASCADE"))
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+    company: Mapped["Company"] = relationship(back_populates="users")
+    position: Mapped["Position"] = relationship(back_populates="users")
+    role: Mapped["Role"] = relationship(back_populates="users")
 
 
 class Company(Base):
@@ -45,6 +56,10 @@ class Company(Base):
 
     id: Mapped[int_pk]
     company_name: Mapped[str_256]
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+    users: Mapped[list["User"]] = relationship(back_populates="company")
 
 
 class Position(Base):
@@ -55,47 +70,66 @@ class Position(Base):
     id: Mapped[int_pk]
     position_title: Mapped[str_256]
 
-
-class UserAccount(Base):
-    """Таблица для хранения информации о связях user-account"""
-
-    __tablename__ = "user_account"
-
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("user.id", ondelete="CASCADE"),
-        primary_key=True,
-    )
-    account_id: Mapped[int] = mapped_column(
-        ForeignKey("account.id", ondelete="CASCADE"),
-        primary_key=True,
-    )
+    users: Mapped[list["User"]] = relationship(back_populates="position")
 
 
-class UserCompany(Base):
-    """Таблица для хранения связей между пользователями и компаниями"""
-
-    __tablename__ = "user_company"
-
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("user.id", ondelete="CASCADE"),
-        primary_key=True,
-    )
-    company_id: Mapped[int] = mapped_column(
-        ForeignKey("company.id", ondelete="CASCADE"),
-        primary_key=True,
-    )
+class RoleName(enum.Enum):
+    admin = "admin"
+    user = "user"
+    guest = "guest"
 
 
-class UserPosition(Base):
-    """Таблица для хранения информации связях пользователей и их должностях"""
+class Role(Base):
+    """Таблица с информацией о роли"""
 
-    __tablename__ = "user_position"
+    __tablename__ = "role"
 
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("user.id", ondelete="CASCADE"),
-        primary_key=True,
-    )
-    position_id: Mapped[int] = mapped_column(
-        ForeignKey("position.id", ondelete="CASCADE"),
-        primary_key=True,
-    )
+    id: Mapped[int_pk]
+    role: Mapped[RoleName]
+
+    users: Mapped[list["User"]] = relationship(back_populates="role")
+
+
+# class UserAccount(Base):
+#     """Таблица для хранения информации о связях user-account"""
+
+#     __tablename__ = "user_account"
+
+#     user_id: Mapped[int] = mapped_column(
+#         ForeignKey("user.id", ondelete="CASCADE"),
+#         primary_key=True,
+#     )
+#     account_id: Mapped[int] = mapped_column(
+#         ForeignKey("account.id", ondelete="CASCADE"),
+#         primary_key=True,
+#     )
+
+
+# class UserCompany(Base):
+#     """Таблица для хранения связей между пользователями и компаниями"""
+
+#     __tablename__ = "user_company"
+
+#     user_id: Mapped[int] = mapped_column(
+#         ForeignKey("user.id", ondelete="CASCADE"),
+#         primary_key=True,
+#     )
+#     company_id: Mapped[int] = mapped_column(
+#         ForeignKey("company.id", ondelete="CASCADE"),
+#         primary_key=True,
+#     )
+
+
+# class UserPosition(Base):
+#     """Таблица для хранения информации связях пользователей и их должностях"""
+
+#     __tablename__ = "user_position"
+
+#     user_id: Mapped[int] = mapped_column(
+#         ForeignKey("user.id", ondelete="CASCADE"),
+#         primary_key=True,
+#     )
+#     position_id: Mapped[int] = mapped_column(
+#         ForeignKey("position.id", ondelete="CASCADE"),
+#         primary_key=True,
+#     )

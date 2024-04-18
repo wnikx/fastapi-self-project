@@ -1,3 +1,8 @@
+from typing import Annotated
+
+from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
 from src.models import Base
 from src.registration.models import (
     Account,
@@ -5,9 +10,6 @@ from src.registration.models import (
     Invite,
     Position,
     User,
-    UserAccount,
-    UserCompany,
-    UserPosition,
 )
 
 __all__ = [
@@ -18,7 +20,8 @@ __all__ = [
     "User",
     "Account",
     "Invite",
-    "UserAccount",
-    "UserCompany",
-    "UserPosition",
 ]
+
+security = HTTPBearer()
+
+token_dep = Annotated[HTTPAuthorizationCredentials, Depends(security)]

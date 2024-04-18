@@ -1,35 +1,28 @@
 from sqlalchemy import insert, select
 
+from src.auth.service import get_password_hash
 from src.database import async_session_maker
-from src.registration.models import (
-    Account,
-    Company,
-    Invite,
-    User,
-    UserAccount,
-    UserCompany,
-    UserPosition,
-)
-from src.registration.schema import SignUpCompleteSchema, SignUpSchema
+from src.registration.models import Account, Company, Invite, User
+from src.registration.schema import CheckEmailSchema, SignUpCompleteSchema, SignUpSchema
 
 
-async def get_check_account_service(account: str):
+async def get_check_email_service(email: CheckEmailSchema):
     async with async_session_maker() as session:
-        stmt = select(Account).filter_by(account_name=account)
+        stmt = select(Account).filter_by(email=email.email)
         query = await session.execute(stmt)
         return query.scalar()
 
 
-async def add_account_with_invite_service(account: str, invite_token: str):
+async def add_account_with_invite_service(email: CheckEmailSchema, invite_token: str):
     async with async_session_maker() as session:
-        new_row = Invite(account=account, invite_token=invite_token)
+        new_row = Invite(email=email.email, invite_token=invite_token)
         session.add(new_row)
         await session.commit()
 
 
 async def check_validation_service(sign_up_data: SignUpSchema):
     async with async_session_maker() as session:
-        data = sign_up_data.dict()
+        data = sign_up_data.model_dump()
         stmt = select(Invite).filter_by(**data)
         query = await session.execute(stmt)
         return query.scalar()
@@ -38,27 +31,18 @@ async def check_validation_service(sign_up_data: SignUpSchema):
 async def sign_up_complete_service(data: SignUpCompleteSchema):
     async with async_session_maker() as session:
         new_company = Company(company_name=data.company_name)
+        new_account = Account(email=data.email)
+        session.add_all([new_company, new_account])
+        await session.flush()
         new_user = User(
             first_name=data.first_name,
             last_name=data.last_name,
-            password=data.password,
-            account=data.account,
+            hashed_password=get_password_hash(data.password),
+            company_id=new_company.id,
+            email_id=new_account.id,
+            role_id=1,
+            position_id=1,
         )
-        new_account = Account(account_name=data.account)
-        session.add_all([new_company, new_user, new_account])
-        await session.flush()
-        new_user_account = UserAccount(
-            user_id=new_user.id,
-            account_id=new_account.id,
-        )
-        new_user_company = UserCompany(user_id=new_user.id, company_id=new_company.id)
-        new_user_position = UserPosition(user_id=new_user.id, position_id=1)
-        session.add_all(
-            [
-                new_user_account,
-                new_user_company,
-                new_user_position,
-            ],
-        )
+        session.add(new_user)
         await session.commit()
-        return 1
+    return 1
