@@ -12,4 +12,4 @@ class Position(Base):
     id: Mapped[int_pk]
     position_title: Mapped[str_256]
 
-    users: Mapped[list["User"]] = relationship(back_populates="position")  # type: ignore
+    users: Mapped[list["User"]] = relationship(back_populates="position")  # type: ignore  # noqa: PGH003

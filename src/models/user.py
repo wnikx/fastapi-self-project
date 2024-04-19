@@ -21,6 +21,6 @@ class User(Base):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-    company: Mapped["Company"] = relationship(back_populates="users")  # type: ignore
-    position: Mapped["Position"] = relationship(back_populates="users")  # type: ignore
-    role: Mapped["Role"] = relationship(back_populates="users")  # type: ignore
+    company: Mapped["Company"] = relationship(back_populates="users")  # type: ignore  # noqa: PGH003
+    position: Mapped["Position"] = relationship(back_populates="users")  # type: ignore  # noqa: PGH003
+    role: Mapped["Role"] = relationship(back_populates="users")  # type: ignore  # noqa: PGH003

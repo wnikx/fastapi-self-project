@@ -13,4 +13,4 @@ class Role(Base):
     id: Mapped[int_pk]
     role: Mapped[RoleName]
 
-    users: Mapped[list["User"]] = relationship(back_populates="role")  # type: ignore
+    users: Mapped[list["User"]] = relationship(back_populates="role")  # type: ignore  # noqa: PGH003

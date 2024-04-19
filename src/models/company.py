@@ -14,4 +14,4 @@ class Company(Base):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-    users: Mapped[list["User"]] = relationship(back_populates="company")  # type: ignore
+    users: Mapped[list["User"]] = relationship(back_populates="company")  # type: ignore  # noqa: PGH003
