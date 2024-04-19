@@ -4,3 +4,9 @@ ruff.toml
 
 # pycache files
 __pycache__/
+
+# env
+.env
+
+# notes for developing
+notes.py

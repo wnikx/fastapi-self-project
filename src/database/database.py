@@ -1,12 +1,7 @@
-import asyncio
-from typing import AsyncGenerator
-
-from sqlalchemy import create_engine
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from src.config import settings
-from src.models import Base
+from src.models.base import Base
 
 async_engine = create_async_engine(settings.DB_URL, echo=False)
 async_session_maker = async_sessionmaker(bind=async_engine)
