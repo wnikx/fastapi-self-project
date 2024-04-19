@@ -10,3 +10,6 @@ __pycache__/
 
 # notes for developing
 notes.py
+
+# vs code settings
+.vscode

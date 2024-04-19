@@ -2,8 +2,6 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.models.base import Base
-from src.models.position import Position
-from src.models.role import Role
 from src.utils.custom_types import created_at, int_pk, str_256, updated_at
 
 
@@ -23,6 +21,6 @@ class User(Base):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-    company: Mapped["Company"] = relationship(back_populates="users")  # noqa: F821
-    position: Mapped["Position"] = relationship(back_populates="users")
-    role: Mapped["Role"] = relationship(back_populates="users")
+    company: Mapped["Company"] = relationship(back_populates="users")  # type: ignore
+    position: Mapped["Position"] = relationship(back_populates="users")  # type: ignore
+    role: Mapped["Role"] = relationship(back_populates="users")  # type: ignore
