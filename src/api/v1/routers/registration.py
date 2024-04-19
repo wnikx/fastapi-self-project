@@ -14,7 +14,7 @@ from src.services.registration import (
 reg_router = APIRouter(prefix="/auth/api/v1", tags=["Auth"])
 
 
-@reg_router.post("/check_email/")
+@reg_router.post("/check_email")
 async def check_email(email: CheckEmailSchema) -> Response:
     email_is_free = await is_email_free(email)
     if email_is_free:
