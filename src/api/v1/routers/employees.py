@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Response
 
 from src import token_dep
-from src.schemas.employee import AddNewEmployeeSchema
-from src.services.manage_employee import add_new_employee_service
+from src.schemas.employee import AddNewEmployeeSchema, NewPassScheme
+from src.services.manage_employee import add_new_employee_service, add_new_password
 
 employee_router = APIRouter(prefix="/employee/api/v1", tags=["Employee manage"])
 
@@ -15,3 +15,10 @@ async def add_new_employee(data: AddNewEmployeeSchema, token: token_dep):
             content="A link was sent to the email with the end of registration",
             status_code=200,
         )
+
+
+@employee_router.post("/add-new-employee-complete/{token}")
+async def add_new_employee_complete(token: str, new_pass: NewPassScheme):
+    new_password = await add_new_password(new_pass.password, token)
+    if new_password is True:
+        return Response(content="Registration is complete", status_code=200)

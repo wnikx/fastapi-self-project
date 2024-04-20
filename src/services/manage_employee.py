@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from src.database.database import async_session_maker
 from src.models import Account, Invite, Position, User
@@ -23,7 +23,9 @@ async def add_new_employee_service(data: AddNewEmployeeSchema, token: str):
             await session.commit()
             print(f"http://127.0.0.1:8000/add-new-employee-complete/{new_token}")
         return True
-    raise HTTPException("You do not have sufficient rights to use this resource", status_code=403)
+    raise HTTPException(
+        detail="You do not have sufficient rights to use this resource", status_code=403
+    )
 
 
 async def create_new_user(user, data, position_id):
@@ -58,3 +60,23 @@ async def check_position(position):
         await session.flush()
         await session.commit()
         return new_position.id
+
+
+async def add_new_password(new_pass, token):
+    email = await check_token(token)
+    async with async_session_maker() as session:
+        new_pass = get_password_hash(new_pass)
+        stmt = update(User).filter_by(email=email).values({"hashed_password": new_pass})
+        query = await session.execute(stmt)
+        await session.commit()
+    return True
+
+
+async def check_token(token):
+    async with async_session_maker() as session:
+        stmt = select(Invite).filter_by(invite_token=token)
+        query = await session.execute(stmt)
+        result = query.scalar()
+        if result:
+            return result.email
+        raise HTTPException("Invalid token", status_code=400)
