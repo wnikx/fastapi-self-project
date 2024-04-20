@@ -15,7 +15,7 @@ async def add_new_employee_service(data: AddNewEmployeeSchema, token: str):
     user = get_user_from_token(token)
     if user["role"] == "admin":
         position_id = await check_position(data.position)
-        new_user = await create_new_user(user, data, position_id)
+        await create_new_user(user, data, position_id)
         async with async_session_maker() as session:
             new_token = generate_token_invate()
             new_invite = Invite(email=data.email, invite_token=new_token)
@@ -70,7 +70,7 @@ async def add_new_password(new_pass, token):
     async with async_session_maker() as session:
         new_pass = get_password_hash(new_pass)
         stmt = update(User).filter_by(email=email).values({"hashed_password": new_pass})
-        query = await session.execute(stmt)
+        await session.execute(stmt)
         await session.commit()
     return True
 
