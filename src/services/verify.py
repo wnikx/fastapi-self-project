@@ -13,10 +13,11 @@ async def verify_data(data: LogInSchema):
         stmt = select(User).filter_by(email=data.email).options(selectinload(User.role))
         query = await session.execute(stmt)
         account_exists = query.scalar()
-        password_is_valid = verify_password(data.password, account_exists.hashed_password)
-        if account_exists and password_is_valid:
-            token = create_jwt_token(
-                data={"email": account_exists.email, "role": account_exists.role.role.value},
-            )
-            return token
+        if account_exists:
+            password_is_valid = verify_password(data.password, account_exists.hashed_password)
+            if password_is_valid:
+                token = create_jwt_token(
+                    data={"email": account_exists.email, "role": account_exists.role.role.value},
+                )
+                return token
         return False

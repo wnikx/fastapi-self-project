@@ -1,9 +1,14 @@
 from fastapi import APIRouter, HTTPException, Response
 
 from src import token_dep
-from src.schemas.employee import AddNewEmployeeSchema, NewPassScheme
+from src.schemas.employee import AddNewEmployeeSchema, NewNameSchema, NewPassScheme
 from src.schemas.registration import CheckEmailSchema
-from src.services.manage_employee import add_new_employee_service, add_new_password, update_email
+from src.services.manage_employee import (
+    add_new_employee_service,
+    add_new_password,
+    update_email,
+    update_name,
+)
 
 employee_router = APIRouter(prefix="/employee/api/v1", tags=["Employee manage"])
 
@@ -30,3 +35,10 @@ async def change_email(new_email: CheckEmailSchema, token: token_dep):
     email_changed = await update_email(new_email, token.credentials)
     if email_changed:
         return Response(content="Email successfully changed", status_code=200)
+
+
+@employee_router.patch("/change-name")
+async def change_name(new_name: NewNameSchema, token: token_dep):
+    name_changed = await update_name(new_name, token.credentials)
+    if name_changed:
+        return Response(content="Name successfully changed", status_code=200)

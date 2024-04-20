@@ -19,3 +19,8 @@ class NewPassScheme(BaseModel):
         if not PasswordValidator.validate_password_strength(value):
             raise ValueError("Password must be strength")
         return value
+
+
+class NewNameSchema(BaseModel):
+    first_name: str
+    last_name: str

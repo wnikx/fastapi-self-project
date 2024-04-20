@@ -3,7 +3,7 @@ from sqlalchemy import select, update
 
 from src.database.database import async_session_maker
 from src.models import Account, Invite, Position, User
-from src.schemas.employee import AddNewEmployeeSchema
+from src.schemas.employee import AddNewEmployeeSchema, NewNameSchema
 from src.schemas.registration import CheckEmailSchema
 from src.services.registration import check_free_email
 from src.utils.hash_pass import get_password_hash
@@ -95,3 +95,13 @@ async def update_email(new_email: CheckEmailSchema, token: str):
             await session.commit()
         return True
     raise HTTPException("This e-mail has already been registered", status_code=400)
+
+
+async def update_name(new_name: NewNameSchema, token: str):
+    user = get_user_from_token(token)
+    values = new_name.model_dump()
+    async with async_session_maker() as session:
+        stmt = update(User).filter_by(email=user["email"]).values(**values)
+        await session.execute(stmt)
+        await session.commit()
+    return True
