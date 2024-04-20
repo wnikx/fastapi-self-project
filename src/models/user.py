@@ -24,3 +24,6 @@ class User(Base):
     company: Mapped["Company"] = relationship(back_populates="users")  # type: ignore  # noqa: PGH003
     position: Mapped["Position"] = relationship(back_populates="users")  # type: ignore  # noqa: PGH003
     role: Mapped["Role"] = relationship(back_populates="users")  # type: ignore  # noqa: PGH003
+    task_observer: Mapped[list["Task"]] = relationship(
+        secondary="observer_task", back_populates="observers"
+    )
