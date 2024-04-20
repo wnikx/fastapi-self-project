@@ -20,13 +20,30 @@ class Task(Base):
     estimated_time: Mapped[int]
 
     observers: Mapped[list["User"]] = relationship(
-        secondary="observer_task", back_populates="task_observer"
+        secondary="observer_task",
+        back_populates="tasks_observer",
     )
-    performers: Mapped[list["User"]] = relationship()
+    performers: Mapped[list["User"]] = relationship(
+        secondary="performer_task",
+        back_populates="tasks_performer",
+    )
 
 
 class ObserverTask(Base):
     __tablename__ = "observer_task"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("user.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    task_id: Mapped[int] = mapped_column(
+        ForeignKey("task.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+
+
+class PerformerTask(Base):
+    __tablename__ = "performer_task"
 
     user_id: Mapped[int] = mapped_column(
         ForeignKey("user.id", ondelete="CASCADE"),
