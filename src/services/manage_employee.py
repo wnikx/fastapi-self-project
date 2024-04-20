@@ -4,6 +4,8 @@ from sqlalchemy import select, update
 from src.database.database import async_session_maker
 from src.models import Account, Invite, Position, User
 from src.schemas.employee import AddNewEmployeeSchema
+from src.schemas.registration import CheckEmailSchema
+from src.services.registration import check_free_email
 from src.utils.hash_pass import get_password_hash
 from src.utils.invite_token import generate_token_invate
 from src.utils.jwt import get_user_from_token
@@ -24,7 +26,8 @@ async def add_new_employee_service(data: AddNewEmployeeSchema, token: str):
             print(f"http://127.0.0.1:8000/add-new-employee-complete/{new_token}")
         return True
     raise HTTPException(
-        detail="You do not have sufficient rights to use this resource", status_code=403
+        detail="You do not have sufficient rights to use this resource",
+        status_code=403,
     )
 
 
@@ -80,3 +83,15 @@ async def check_token(token):
         if result:
             return result.email
         raise HTTPException("Invalid token", status_code=400)
+
+
+async def update_email(new_email: CheckEmailSchema, token: str):
+    email_free = await check_free_email(new_email)
+    if email_free:
+        user = get_user_from_token(token)
+        async with async_session_maker() as session:
+            stmt = update(User).filter_by(email=user["email"]).values({"email": new_email.email})
+            await session.execute(stmt)
+            await session.commit()
+        return True
+    raise HTTPException("This e-mail has already been registered", status_code=400)

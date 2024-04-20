@@ -5,18 +5,14 @@ from src.schemas.registration import (
     SignUpCompleteSchema,
     SignUpSchema,
 )
-from src.services.registration import (
-    check_validation,
-    finalize_registration,
-    is_email_free,
-)
+from src.services.registration import check_validation, email_free, finalize_registration
 
 reg_router = APIRouter(prefix="/auth/api/v1", tags=["Auth"])
 
 
 @reg_router.post("/check_email")
 async def check_email(email: CheckEmailSchema) -> Response:
-    email_is_free = await is_email_free(email)
+    email_is_free = await email_free(email)
     if email_is_free:
         return Response(
             status_code=200,
