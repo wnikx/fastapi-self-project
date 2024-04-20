@@ -19,9 +19,7 @@ def get_user_from_token(token: str):
             SECRET_KEY,
             algorithms=[ALGORITHM],
         )
-        return payload.get(
-            "sub",
-        )
+        return payload
     except jwt.ExpiredSignatureError:
         pass
     except jwt.InvalidTokenError:
