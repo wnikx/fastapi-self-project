@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 
 from src import token_dep
@@ -58,3 +58,14 @@ async def create_new_task(new_task_sheme: TaskSchema, token: token_dep):
         detail="You do not have sufficient rights to use this resource",
         status_code=403,
     )
+
+
+async def refresh_task(task_id: int, task: TaskSchema, token: token_dep):
+    user = get_user_from_token(token.credentials)
+    if user["role"] == "admin":
+        values = task.model_dump()
+        async with async_session_maker() as session:
+            stmt = update(Task).filter_by(id=task_id).values(**values)
+            await session.execute(stmt)
+            await session.commit()
+    return True
