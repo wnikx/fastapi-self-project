@@ -10,8 +10,8 @@ class TaskSchema(BaseModel):
     title: str
     author_id: int
     assignee_id: int
-    observers: List[str] = []
-    performers: List[str] = []
+    observers: List[int] = []
+    performers: List[int] = []
     deadline: date
     status: StatusTask
     estimated_time: int
