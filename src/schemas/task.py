@@ -12,6 +12,6 @@ class TaskSchema(BaseModel):
     assignee: EmailStr
     observers: List[str] = []
     performers: List[str] = []
-    deadline: datetime
+    deadline: date
     status: StatusTask
     estimated_time: int
