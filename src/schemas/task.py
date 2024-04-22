@@ -1,9 +1,8 @@
-from datetime import datetime
+from datetime import date
 from typing import List
 
 from pydantic import BaseModel, EmailStr
 
-from src.schemas.registration import CheckEmailSchema
 from src.utils.enums import StatusTask
 
 

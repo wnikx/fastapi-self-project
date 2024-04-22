@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -15,7 +15,7 @@ class Task(Base):
     title: Mapped[str_256]
     author_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     assignee_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
-    deadline: Mapped[datetime]
+    deadline: Mapped[date]
     status: Mapped[StatusTask]
     estimated_time: Mapped[int]
 
