@@ -13,16 +13,10 @@ async def create_new_task(new_task_sheme: TaskSchema, token: token_dep):
     user = get_user_from_token(token.credentials)
     if user["role"] == "admin":
         async with async_session_maker() as session:
-            stmt = select(User).filter_by(email=new_task_sheme.author)
-            stmt_2 = select(User).filter_by(email=new_task_sheme.assignee)
-            query = await session.execute(stmt)
-            query_2 = await session.execute(stmt_2)
-            author = query.scalar()
-            assignee = query_2.scalar()
             new_task = Task(
                 title=new_task_sheme.title,
-                author_id=author.id,
-                assignee_id=assignee.id,
+                author_id=new_task_sheme.id,
+                assignee_id=new_task_sheme.id,
                 deadline=new_task_sheme.deadline,
                 status=new_task_sheme.status,
                 estimated_time=new_task_sheme.estimated_time,
