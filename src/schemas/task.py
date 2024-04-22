@@ -1,18 +1,18 @@
 from datetime import datetime
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 from src.schemas.registration import CheckEmailSchema
 from src.utils.enums import StatusTask
 
 
-class Task(BaseModel):
+class TaskSchema(BaseModel):
     title: str
-    author: str
-    assignee: list[CheckEmailSchema] = []
-    observers: list[CheckEmailSchema] = []
-    performers: str
+    author: EmailStr
+    assignee: EmailStr
+    observers: List[str] = []
+    performers: List[str] = []
     deadline: datetime
     status: StatusTask
     estimated_time: int
