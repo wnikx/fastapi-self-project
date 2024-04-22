@@ -8,8 +8,8 @@ from src.utils.enums import StatusTask
 
 class TaskSchema(BaseModel):
     title: str
-    author: EmailStr
-    assignee: EmailStr
+    author_id: int
+    assignee_id: int
     observers: List[str] = []
     performers: List[str] = []
     deadline: date
