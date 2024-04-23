@@ -4,6 +4,7 @@ ruff.toml
 
 # pycache files
 __pycache__/
+.pytest_cache/
 
 # env
 .env
