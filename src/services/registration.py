@@ -13,16 +13,11 @@ from src.utils.invite_token import generate_token_invate
 async def email_free(email: CheckEmailSchema):
     email_not_exists = check_free_email(email)
     if email_not_exists:
-        async with async_session_maker() as session:
-            stmt = select(Account).filter_by(email=email.email)
-            query = await session.execute(stmt)
-            email_exists = query.scalar()
-            if not email_exists:
-                invite_token = generate_token_invate()
-                await add_account_with_invite_token(email, invite_token)
-                imitation_send_email = f"Account - {email.email}, Invite token - {invite_token}"
-                print(imitation_send_email)
-                return True
+        invite_token = generate_token_invate()
+        await add_account_with_invite_token(email, invite_token)
+        imitation_send_email = f"Account - {email.email}, Invite token - {invite_token}"
+        print(imitation_send_email)
+        return True
     return False
 
 
