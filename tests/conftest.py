@@ -32,6 +32,7 @@ def event_loop():
 @pytest.fixture(scope="session", autouse=True)
 async def setup_db(async_engine):
     print(settings.DB_NAME)
+
     assert settings.MODE == "TEST"
     async with async_engine.begin() as db_conn:
         await db_conn.run_sync(Base.metadata.drop_all)
