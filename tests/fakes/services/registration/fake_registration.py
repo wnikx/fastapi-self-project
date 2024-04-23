@@ -1,4 +1,4 @@
-from src.schemas.registration import CheckEmailSchema
+from src.schemas.registration import CheckEmailSchema, SignUpSchema
 
 fake_email_schemas = [CheckEmailSchema(email="fake@test.com")]
 
@@ -16,3 +16,4 @@ TEST_EMAIL_FREE_PARAMS = [
 
 fake_data_for_invite_row = {"email": fake_email_schemas[0].email, "invite_token": "invite_token"}
 yes_success = ("fake@test.com", "invite_token")
+fake_check_validation_data = SignUpSchema(email="fake@test.com", invite_token="invite_token")

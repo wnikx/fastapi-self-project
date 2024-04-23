@@ -1,9 +1,15 @@
 import pytest
 
-from src.services.registration import add_account_with_invite_token, check_free_email, email_free
+from src.services.registration import (
+    add_account_with_invite_token,
+    check_free_email,
+    check_validation,
+    email_free,
+)
 from tests.fakes import (
     TEST_CHECK_EMAIL_FREE_PARAMS,
     TEST_EMAIL_FREE_PARAMS,
+    fake_check_validation_data,
     fake_email_schemas,
     yes_success,
 )
@@ -38,3 +44,12 @@ async def test_add_account_with_invite_token(check_invite_row, delete_all_the_in
     assert is_success == yes_success
 
     await delete_all_the_invites()
+
+
+async def test_check_validation(check_invite_row, delete_all_the_invites, add_invite_row):
+    await add_invite_row()
+
+    added_row = await check_validation(fake_check_validation_data)
+    result_row = (added_row.email, added_row.invite_token)
+    fake_row = await check_invite_row()
+    assert result_row == fake_row
