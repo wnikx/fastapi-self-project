@@ -10,7 +10,7 @@ from src.utils.hash_pass import get_password_hash
 from src.utils.invite_token import generate_token_invate
 
 
-async def email_free(email: CheckEmailSchema):
+async def email_free(email: CheckEmailSchema) -> bool:
     email_not_exists = await check_free_email(email)
     if email_not_exists:
         invite_token = generate_token_invate()
@@ -36,7 +36,7 @@ async def check_validation(sign_up_data: SignUpSchema):
         return query.scalar()
 
 
-async def finalize_registration(data: SignUpCompleteSchema):
+async def finalize_registration(data: SignUpCompleteSchema) -> bool:
     async with async_session_maker() as session:
         new_company = Company(company_name=data.company_name)
         new_account = Account(email=data.email)
@@ -53,10 +53,10 @@ async def finalize_registration(data: SignUpCompleteSchema):
         )
         session.add(new_user)
         await session.commit()
-    return 1
+        return True
 
 
-async def check_free_email(email: CheckEmailSchema):
+async def check_free_email(email: CheckEmailSchema) -> bool:
     async with async_session_maker() as session:
         stmt = select(Account).filter_by(email=email.email)
         query = await session.execute(stmt)
