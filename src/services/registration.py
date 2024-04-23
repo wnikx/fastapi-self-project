@@ -11,7 +11,7 @@ from src.utils.invite_token import generate_token_invate
 
 
 async def email_free(email: CheckEmailSchema):
-    email_not_exists = check_free_email(email)
+    email_not_exists = await check_free_email(email)
     if email_not_exists:
         invite_token = generate_token_invate()
         await add_account_with_invite_token(email, invite_token)

@@ -19,14 +19,11 @@ async def delete_all_the_accounts(async_session_maker):
 
 @pytest.fixture(scope="session")
 async def add_account(async_session_maker):
-    print("here")
-
     async def _add_users() -> None:
         async with async_session_maker() as session:
-            for fake_email_schema in fake_email_schemas:
-                await session.execute(
-                    insert(Account).values(**fake_email_schema.model_dump()),
-                )
+            await session.execute(
+                insert(Account).values(**fake_email_schemas[0].model_dump()),
+            )
             await session.commit()
 
     return _add_users
