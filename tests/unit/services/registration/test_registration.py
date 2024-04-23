@@ -53,3 +53,5 @@ async def test_check_validation(check_invite_row, delete_all_the_invites, add_in
     result_row = (added_row.email, added_row.invite_token)
     fake_row = await check_invite_row()
     assert result_row == fake_row
+
+    await delete_all_the_invites()
