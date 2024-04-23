@@ -5,12 +5,14 @@ from src.services.registration import (
     check_free_email,
     check_validation,
     email_free,
+    finalize_registration,
 )
 from tests.fakes import (
     TEST_CHECK_EMAIL_FREE_PARAMS,
     TEST_EMAIL_FREE_PARAMS,
     fake_check_validation_data,
     fake_email_schemas,
+    fake_users_schemas,
     yes_success,
 )
 
@@ -55,3 +57,12 @@ async def test_check_validation(check_invite_row, delete_all_the_invites, add_in
     assert result_row == fake_row
 
     await delete_all_the_invites()
+
+
+async def test_finalize_registration(add_position_and_role, delete_all_position_and_role):
+    await add_position_and_role()
+
+    row_added = await finalize_registration(fake_users_schemas[0])
+    assert bool(row_added) == True
+
+    await delete_all_position_and_role()

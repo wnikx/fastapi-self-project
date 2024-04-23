@@ -6,6 +6,7 @@ from fakes.services.registration.fake_registration import (
     fake_email_schemas,
     yes_success,
 )
+from fakes.services.registration.fake_user import fake_users_schemas
 
 __all__ = [
     "fake_email_schemas",
@@ -14,4 +15,5 @@ __all__ = [
     "fake_data_for_invite_row",
     "yes_success",
     "fake_check_validation_data",
+    "fake_users_schemas",
 ]
