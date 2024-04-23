@@ -8,7 +8,6 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = {extras = ["all"], version = "^0.110.1"}
-python-dotenv = "^1.0.1"
 pytest = "^8.1.1"
 sqlalchemy = "^2.0.29"
 ruff = "^0.3.7"
