@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import HTTPException
 from sqlalchemy import select, update
 
@@ -50,7 +52,7 @@ async def create_new_user(user: dict, data: AddNewEmployeeSchema, position_id: i
         await session.commit()
 
 
-async def check_position(position):
+async def check_position(position: str) -> int:
     async with async_session_maker() as session:
         stmt = select(Position).filter_by(position_title=position)
         query = await session.execute(stmt)
@@ -65,7 +67,7 @@ async def check_position(position):
         return position_id
 
 
-async def add_new_password(new_pass, token):
+async def add_new_password(new_pass: str, token: str) -> bool:
     email = await check_token(token)
     async with async_session_maker() as session:
         new_pass = get_password_hash(new_pass)
@@ -75,7 +77,7 @@ async def add_new_password(new_pass, token):
     return True
 
 
-async def check_token(token):
+async def check_token(token: str) -> Optional[str]:
     async with async_session_maker() as session:
         stmt = select(Invite).filter_by(invite_token=token)
         query = await session.execute(stmt)
@@ -85,7 +87,7 @@ async def check_token(token):
         raise HTTPException("Invalid token", status_code=400)
 
 
-async def update_email(new_email: CheckEmailSchema, token: str):
+async def update_email(new_email: CheckEmailSchema, token: str) -> Optional[bool]:
     email_free = await check_free_email(new_email)
     if email_free:
         user = get_user_from_token(token)
@@ -97,7 +99,7 @@ async def update_email(new_email: CheckEmailSchema, token: str):
     raise HTTPException("This e-mail has already been registered", status_code=400)
 
 
-async def update_name(new_name: NewNameSchema, token: str):
+async def update_name(new_name: NewNameSchema, token: str) -> bool:
     user = get_user_from_token(token)
     values = new_name.model_dump()
     async with async_session_maker() as session:

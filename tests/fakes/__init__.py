@@ -1,5 +1,8 @@
 from fakes.services.manage_employee.fake_employee_data import (
     fake_data_for_token,
+    fake_email,
+    fake_sign_up_schema,
+    fake_token,
     test_employee_schema,
 )
 from fakes.services.registration.fake_registration import (
@@ -26,4 +29,7 @@ __all__ = [
     "fake_login_schema",
     "test_employee_schema",
     "fake_data_for_token",
+    "fake_sign_up_schema",
+    "fake_token",
+    "fake_email",
 ]
