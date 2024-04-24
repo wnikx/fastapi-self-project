@@ -2,7 +2,8 @@ import pytest
 from sqlalchemy import insert, text
 
 from src.models import Position, Role
-from tests.fakes import fake_company, fake_user
+from src.utils.jwt import create_jwt_token
+from tests.fakes import fake_company, fake_data_for_token, fake_user
 
 
 @pytest.fixture(scope="session")
@@ -11,7 +12,9 @@ async def add_position_and_role(async_session_maker):
         async with async_session_maker() as session:
             stmt_1 = insert(Position).values({"position_title": "admin"})
             stmt_2 = insert(Role).values({"role": "admin"})
+            stmt_3 = insert(Role).values({"role": "user"})
             await session.execute(stmt_1)
+            await session.execute(stmt_3)
             await session.execute(stmt_2)
             await session.commit()
 
@@ -76,3 +79,9 @@ async def delete_company(async_session_maker):
             await session.commit()
 
     return _clean_rows
+
+
+@pytest.fixture(scope="session")
+def fake_token():
+    token = create_jwt_token(fake_data_for_token)
+    return token

@@ -1,3 +1,7 @@
+from fakes.services.manage_employee.fake_employee_data import (
+    fake_data_for_token,
+    test_employee_schema,
+)
 from fakes.services.registration.fake_registration import (
     TEST_CHECK_EMAIL_FREE_PARAMS,
     TEST_EMAIL_FREE_PARAMS,
@@ -20,4 +24,6 @@ __all__ = [
     "fake_user",
     "fake_company",
     "fake_login_schema",
+    "test_employee_schema",
+    "fake_data_for_token",
 ]

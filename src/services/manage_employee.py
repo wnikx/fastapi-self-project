@@ -11,7 +11,7 @@ from src.utils.invite_token import generate_token_invate
 from src.utils.jwt import get_user_from_token
 
 
-async def add_new_employee_service(data: AddNewEmployeeSchema, token: str):
+async def add_new_employee_service(data: AddNewEmployeeSchema, token: str) -> bool:
     user = get_user_from_token(token)
     if user["role"] == "admin":
         position_id = await check_position(data.position)
@@ -31,7 +31,7 @@ async def add_new_employee_service(data: AddNewEmployeeSchema, token: str):
     )
 
 
-async def create_new_user(user, data, position_id):
+async def create_new_user(user: dict, data: AddNewEmployeeSchema, position_id: int) -> None:
     async with async_session_maker() as session:
         stmt = select(User).filter_by(email=user["email"])
         query = await session.execute(stmt)
@@ -58,11 +58,11 @@ async def check_position(position):
         if position_exists:
             return position_exists.id
         new_position = Position(position_title=position)
-        query = await session.execute(stmt)
         session.add(new_position)
         await session.flush()
+        position_id = new_position.id
         await session.commit()
-        return new_position.id
+        return position_id
 
 
 async def add_new_password(new_pass, token):

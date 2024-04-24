@@ -1,8 +1,9 @@
-from src.services.verify import verify_data
-from tests.fakes import fake_login_schema
+from src.services.manage_employee import add_new_employee_service
+from tests.fakes import test_employee_schema
 
 
-async def test_verify_data(
+async def test_add_new_employee_service(
+    fake_token,
     add_company,
     delete_company,
     add_position_and_role,
@@ -13,8 +14,8 @@ async def test_verify_data(
     await add_company()
     await add_position_and_role()
     await add_user()
-    result = await verify_data(fake_login_schema)
-    assert result == False
+    result = await add_new_employee_service(test_employee_schema, fake_token)
     await delete_user()
     await delete_all_position_and_role()
     await delete_company()
+    assert result == True
