@@ -2,15 +2,14 @@ from fastapi import HTTPException
 from sqlalchemy import delete, select, update
 from sqlalchemy.orm import selectinload
 
-from src import token_dep
 from src.database.database import async_session_maker
 from src.models import Task, User
 from src.schemas.task import TaskSchema
 from src.utils.jwt import get_user_from_token
 
 
-async def create_task(new_task_sheme: TaskSchema, token: token_dep):
-    user = get_user_from_token(token.credentials)
+async def create_task(new_task_sheme: TaskSchema, token: str):
+    user = get_user_from_token(token)
     if user["role"] == "admin":
         async with async_session_maker() as session:
             new_task = Task(
@@ -54,8 +53,8 @@ async def create_task(new_task_sheme: TaskSchema, token: token_dep):
     )
 
 
-async def refresh_task(task_id: int, task: TaskSchema, token: token_dep):
-    user = get_user_from_token(token.credentials)
+async def refresh_task(task_id: int, task: TaskSchema, token: str):
+    user = get_user_from_token(token)
     if user["role"] == "admin":
         values = {
             "title": task.title,
@@ -100,8 +99,8 @@ async def refresh_task(task_id: int, task: TaskSchema, token: token_dep):
     )
 
 
-async def remove_task(task_id, token):
-    user = get_user_from_token(token.credentials)
+async def remove_task(task_id, token: str):
+    user = get_user_from_token(token)
     if user["role"] == "admin":
         async with async_session_maker() as session:
             query = delete(Task).filter_by(id=task_id)

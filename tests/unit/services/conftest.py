@@ -36,6 +36,17 @@ async def delete_all_position_and_role(async_session_maker):
 
 
 @pytest.fixture(scope="session")
+async def add_company(async_session_maker):
+    async def _add_row() -> None:
+        async with async_session_maker() as session:
+            new_fake_company = fake_company
+            session.add(new_fake_company)
+            await session.commit()
+
+    return _add_row
+
+
+@pytest.fixture(scope="session")
 async def add_user(async_session_maker):
     async def _add_row() -> None:
         async with async_session_maker() as session:
@@ -56,17 +67,6 @@ async def delete_user(async_session_maker):
             await session.commit()
 
     return _clean_rows
-
-
-@pytest.fixture(scope="session")
-async def add_company(async_session_maker):
-    async def _add_row() -> None:
-        async with async_session_maker() as session:
-            new_fake_company = fake_company
-            session.add(new_fake_company)
-            await session.commit()
-
-    return _add_row
 
 
 @pytest.fixture(scope="session")
