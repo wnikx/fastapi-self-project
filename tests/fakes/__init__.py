@@ -1,6 +1,8 @@
 from fakes.services.manage_employee.fake_employee_data import (
+    fake_check_email_schema,
     fake_data_for_token,
     fake_email,
+    fake_new_name_schema,
     fake_sign_up_schema,
     fake_token,
     test_employee_schema,
@@ -32,4 +34,6 @@ __all__ = [
     "fake_sign_up_schema",
     "fake_token",
     "fake_email",
+    "fake_check_email_schema",
+    "fake_new_name_schema",
 ]
