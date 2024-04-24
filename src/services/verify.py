@@ -1,3 +1,5 @@
+from typing import Union
+
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
@@ -8,7 +10,7 @@ from src.utils.hash_pass import verify_password
 from src.utils.jwt import create_jwt_token
 
 
-async def verify_data(data: LogInSchema):
+async def verify_data(data: LogInSchema) -> Union[str, bool]:
     async with async_session_maker() as session:
         stmt = select(User).filter_by(email=data.email).options(selectinload(User.role))
         query = await session.execute(stmt)
