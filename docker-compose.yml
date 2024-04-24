@@ -1,0 +1,24 @@
+version: "3.6"
+
+services:
+  db:
+    image: postgres:15
+    container_name: db_app
+    command: -p 1221
+    expose:
+      - 1221
+    env_file:
+      - .env-non-dev
+  app:
+    build:
+      context: .
+    container_name: fastapi_app
+    command: >
+        sh -c "alembic upgrade head &&
+             uvicorn --port 8000 --host 0.0.0.0 src.main:app --reload"
+    env_file:
+      - .env-non-dev
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
