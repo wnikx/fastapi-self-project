@@ -10,8 +10,8 @@ from src.models.user import User
 __all__ = [
     "Base",
     "Account",
-    "Company",
     "Position",
+    "Company",
     "User",
     "Account",
     "Invite",
