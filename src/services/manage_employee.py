@@ -16,17 +16,20 @@ from src.utils.jwt import get_user_from_token
 async def add_new_employee_service(data: AddNewEmployeeSchema, token: str) -> bool:
     user = get_user_from_token(token)
     if user["role"] == "admin":
-        position_id = await check_position(data.position)
-        await create_new_user(user, data, position_id)
-        async with async_session_maker() as session:
-            new_token = generate_token_invate()
-            new_invite = Invite(email=data.email, invite_token=new_token)
-            new_account = Account(email=data.email)
-            session.add_all([new_invite, new_account])
-            await session.flush()
-            await session.commit()
-            print(f"http://127.0.0.1:8000/add-new-employee-complete/{new_token}")
-        return True
+        email_free = await check_free_email(CheckEmailSchema(email=data.email))
+        if email_free:
+            position_id = await check_position(data.position)
+            await create_new_user(user, data, position_id)
+            async with async_session_maker() as session:
+                new_token = generate_token_invate()
+                new_invite = Invite(email=data.email, invite_token=new_token)
+                new_account = Account(email=data.email)
+                session.add_all([new_invite, new_account])
+                await session.flush()
+                await session.commit()
+                print(f"http://127.0.0.1:8000/add-new-employee-complete/{new_token}")
+            return True
+        raise HTTPException("This e-mail has already been registered", status_code=400)
     raise HTTPException(
         detail="You do not have sufficient rights to use this resource",
         status_code=403,

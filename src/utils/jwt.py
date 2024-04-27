@@ -1,4 +1,5 @@
 import jwt
+from fastapi import HTTPException, status
 
 SECRET_KEY = "mysecretkey"
 ALGORITHM = "HS256"
@@ -13,6 +14,11 @@ def create_jwt_token(data: dict):
 
 
 def get_user_from_token(token: str):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
     try:
         payload = jwt.decode(
             token,
@@ -21,6 +27,6 @@ def get_user_from_token(token: str):
         )
         return payload
     except jwt.ExpiredSignatureError:
-        pass
+        raise credentials_exception
     except jwt.InvalidTokenError:
-        pass
+        raise credentials_exception
