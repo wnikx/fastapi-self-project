@@ -2,4 +2,4 @@ from pydantic import BaseModel
 
 
 class AddNewDivisionSchema(BaseModel):
-    pass
+    division_title: str

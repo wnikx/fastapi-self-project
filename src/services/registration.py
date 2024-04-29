@@ -38,7 +38,7 @@ async def finalize_registration(data: SignUpCompleteSchema) -> bool:
     async with async_session_maker() as session:
         new_company = Company(company_name=data.company_name)
         new_account = Account(email=data.email)
-        new_position = Position(id=1, position_title="CEO")
+        new_position = Position(position_title="CEO")
         new_role = Role(role="admin")
         session.add_all([new_company, new_account, new_position, new_role])
         await session.flush()
