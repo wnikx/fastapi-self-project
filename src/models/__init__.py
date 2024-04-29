@@ -1,6 +1,7 @@
 from src.models.account import Account
 from src.models.base import Base
 from src.models.company import Company
+from src.models.division import StructAdmPositions
 from src.models.invite import Invite
 from src.models.position import Position
 from src.models.role import Role
@@ -17,4 +18,5 @@ __all__ = [
     "Invite",
     "Role",
     "Task",
+    "StructAdmPositions",
 ]
