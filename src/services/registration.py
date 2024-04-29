@@ -38,9 +38,9 @@ async def finalize_registration(data: SignUpCompleteSchema) -> bool:
     async with async_session_maker() as session:
         new_company = Company(company_name=data.company_name)
         new_account = Account(email=data.email)
-        new_position = Position(position_title="CEO")
+        new_position_id = await check_position()
         new_role = Role(role="admin")
-        session.add_all([new_company, new_account, new_position, new_role])
+        session.add_all([new_company, new_account, new_role])
         await session.flush()
         new_user = User(
             first_name=data.first_name,
@@ -49,7 +49,7 @@ async def finalize_registration(data: SignUpCompleteSchema) -> bool:
             company_id=new_company.id,
             email=data.email,
             role_id=new_role.id,
-            position_id=new_position.id,
+            position_id=new_position_id,
         )
         session.add(new_user)
         await session.commit()
@@ -64,3 +64,17 @@ async def check_free_email(email: CheckEmailSchema) -> bool:
         if not email_exists:
             return True
         return False
+
+
+async def check_position() -> bool:
+    async with async_session_maker() as session:
+        stmt = select(Position).filter_by(position_title="CEO")
+        query = await session.execute(stmt)
+        position_exists = query.scalar()
+        if position_exists:
+            return position_exists.id
+        else:
+            new_pos = Position(position_title="CEO")
+            session.add(new_pos)
+            await session.flush()
+            return new_pos.id
