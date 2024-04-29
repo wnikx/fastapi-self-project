@@ -1,10 +1,11 @@
 from tokenize import String
 
 from sqlalchemy import Column, Index, Integer, Sequence, func
-from sqlalchemy.orm import foreign, relationship, remote
-from sqlalchemy_utils import Ltree, LtreeType, path
+from sqlalchemy.orm import Mapped, foreign, relationship, remote
+from sqlalchemy_utils import Ltree, LtreeType
 
 from src.models import Base
+from src.utils.custom_types import str_256
 
 id_seq = Sequence("position_id_seq")
 
@@ -40,7 +41,7 @@ class StructAdmPositions(Base):
     __tablename__ = "struct_adm_positions"
 
     id = Column(Integer, id_seq, primary_key=True)
-    note = Column(String, nullable=False)
+    note: Mapped[str_256]
     path = Column(LtreeType, nullable=False)
 
     parent = relationship(

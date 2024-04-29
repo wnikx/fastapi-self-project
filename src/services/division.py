@@ -9,42 +9,32 @@ from src.utils.jwt import get_user_from_token
 async def add_new_divsion_service(data: AddNewDivisionSchema, token: str):
     user = get_user_from_token(token)
     if user["role"] == "admin":
-        existed = await check_exist_email(user["email"])
-        if existed:
+        ceo = await check_ceo_exist()
+        if ceo:
             async with async_session_maker() as session:
-                stmt = select(StructAdmPositions).filter_by(email=user["email"])
-                parent = (await session.execute(stmt)).scalar()
-                new_div = StructAdmPositions(id=existed, note=data.division_title, parent=parent)
-                session.add(new_div)
-                await session.commit()
-        else:
-            ceo_id = await check_ceo_email()
-            async with async_session_maker() as session:
-                ceo_pos = StructAdmPositions(id=ceo_id, note="CEO")
-                session.add(ceo_pos)
-                await session.flush()
+                stmt = select(func.count()).select_from(StructAdmPositions)
+                count_divs = (await session.execute(stmt)).scalar()
                 new_div = StructAdmPositions(
-                    id=1,
-                    note=data.division_title,
-                    parent=ceo_pos,
+                    id=count_divs + 1, note=data.division_title, parent=ceo
                 )
                 session.add(new_div)
                 await session.commit()
+        else:
+            async with async_session_maker() as session:
+                new_ceo = StructAdmPositions(id=1, note="CEO")
+                session.add(new_ceo)
+                await session.flush()
+                new_div = StructAdmPositions(id=2, note=data.division_title, parent=new_ceo)
+                session.add(new_div)
+                await session.commit()
+        return True
 
 
-async def check_exist_email(email):
+async def check_ceo_exist():
     async with async_session_maker() as session:
-        stmt = select(func.count()).select_from(StructAdmPositions).filter_by(email=email)
+        stmt = select(StructAdmPositions).filter_by(note="CEO")
         query = await session.execute(stmt)
-        position_count = query.scalar()
-        if position_count:
-            return position_count
-        return 0
-
-
-async def check_ceo_email():
-    async with async_session_maker() as session:
-        stmt = select(func.count()).select_from(StructAdmPositions).filter_by(note="CEO")
-        query = await session.execute(stmt)
-        ceo_count = query.scalar()
-        return ceo_count + 1
+        ceo_existed = query.scalar()
+        if ceo_existed:
+            return ceo_existed
+        return False
