@@ -1,10 +1,8 @@
 from sqlalchemy import select
+from sqlalchemy_utils import Ltree
 
 from src.database.database import async_session_maker
-from src.models.account import Account
-from src.models.company import Company
-from src.models.invite import Invite
-from src.models.user import User
+from src.models import Account, Company, Invite, Position, Role, User
 from src.schemas.registration import CheckEmailSchema, SignUpCompleteSchema, SignUpSchema
 from src.utils.hash_pass import get_password_hash
 from src.utils.invite_token import generate_token_invate
@@ -40,7 +38,9 @@ async def finalize_registration(data: SignUpCompleteSchema) -> bool:
     async with async_session_maker() as session:
         new_company = Company(company_name=data.company_name)
         new_account = Account(email=data.email)
-        session.add_all([new_company, new_account])
+        new_position = Position(id=1, position_title="CEO")
+        new_role = Role(role="admin")
+        session.add_all([new_company, new_account, new_position, new_role])
         await session.flush()
         new_user = User(
             first_name=data.first_name,
@@ -48,8 +48,8 @@ async def finalize_registration(data: SignUpCompleteSchema) -> bool:
             hashed_password=get_password_hash(data.password),
             company_id=new_company.id,
             email=data.email,
-            role_id=1,
-            position_id=1,
+            role_id=new_role.id,
+            position_id=new_position.id,
         )
         session.add(new_user)
         await session.commit()
