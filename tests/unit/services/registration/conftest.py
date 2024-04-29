@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy import insert, select, text
 
-from src.models import Account, Invite, Position, Role
+from src.models import Account, Invite, Position, Role, StructAdmPositions
 from tests.fakes import fake_check_validation_data, fake_data_for_invite_row, fake_email_schemas
 
 

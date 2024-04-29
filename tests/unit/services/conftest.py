@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy import insert, text
 
-from src.models import Position, Role
+from src.models import Position, Role, StructAdmPositions
 from src.utils.jwt import create_jwt_token
 from tests.fakes import fake_company, fake_data_for_token, fake_user
 
@@ -85,3 +85,26 @@ async def delete_company(async_session_maker):
 def fake_token():
     token = create_jwt_token(fake_data_for_token)
     return token
+
+
+@pytest.fixture(scope="session")
+async def add_ceo_position(async_session_maker):
+    async def _add_row() -> None:
+        async with async_session_maker() as session:
+            fake_ceo_position = StructAdmPositions(id=1, note="CEO")
+            session.add(fake_ceo_position)
+            await session.commit()
+
+    return _add_row
+
+
+@pytest.fixture(scope="session")
+async def delete_ceo_position(async_session_maker):
+    sql = text("TRUNCATE public.struct_adm_positions RESTART IDENTITY CASCADE;")
+
+    async def _clean_rows() -> None:
+        async with async_session_maker() as session:
+            await session.execute(sql)
+            await session.commit()
+
+    return _clean_rows
