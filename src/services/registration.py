@@ -39,8 +39,8 @@ async def finalize_registration(data: SignUpCompleteSchema) -> bool:
         new_company = Company(company_name=data.company_name)
         new_account = Account(email=data.email)
         new_position_id = await check_position()
-        new_role = Role(role="admin")
-        session.add_all([new_company, new_account, new_role])
+        new_role_id = await check_role()
+        session.add_all([new_company, new_account])
         await session.flush()
         new_user = User(
             first_name=data.first_name,
@@ -48,7 +48,7 @@ async def finalize_registration(data: SignUpCompleteSchema) -> bool:
             hashed_password=get_password_hash(data.password),
             company_id=new_company.id,
             email=data.email,
-            role_id=new_role.id,
+            role_id=new_role_id,
             position_id=new_position_id,
         )
         session.add(new_user)
@@ -77,4 +77,22 @@ async def check_position() -> bool:
             new_pos = Position(position_title="CEO")
             session.add(new_pos)
             await session.flush()
-            return new_pos.id
+            new_pos = new_pos.id
+            await session.commit()
+            return new_pos
+
+
+async def check_role() -> bool:
+    async with async_session_maker() as session:
+        stmt = select(Role).filter_by(role="admin")
+        query = await session.execute(stmt)
+        role_exists = query.scalar()
+        if role_exists:
+            return role_exists.id
+        else:
+            new_role = Role(role="admin")
+            session.add(new_role)
+            await session.flush()
+            new_role = new_role.id
+            await session.commit()
+            return new_role
