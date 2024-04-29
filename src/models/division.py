@@ -41,6 +41,7 @@ class StructAdmPositions(Base):
 
     id = Column(Integer, id_seq, primary_key=True)
     note = Column(String, nullable=False)
+    email = Column(String, nullable=False)
     path = Column(LtreeType, nullable=False)
 
     parent = relationship(
