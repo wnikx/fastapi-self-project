@@ -4,6 +4,7 @@ from src.services.registration import (
     add_account_with_invite_token,
     check_free_email,
     check_position,
+    check_role,
     check_validation,
     email_free,
     finalize_registration,
@@ -69,6 +70,18 @@ async def test_check_position(add_position_and_role, delete_all_position_and_rol
 
     new_position_id = await check_position()
     assert new_position_id == 1
+    await delete_all_position_and_role()
+
+
+async def test_check_role(add_position_and_role, delete_all_position_and_role):
+    await add_position_and_role()
+
+    role_id = await check_role()
+    assert role_id == 2
+    await delete_all_position_and_role()
+
+    role_id = await check_role()
+    assert role_id == 1
     await delete_all_position_and_role()
 
 
