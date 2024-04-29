@@ -10,7 +10,7 @@ from tests.fakes import fake_company, fake_data_for_token, fake_user
 async def add_position_and_role(async_session_maker):
     async def _add_row() -> None:
         async with async_session_maker() as session:
-            stmt_1 = insert(Position).values({"position_title": "admin"})
+            stmt_1 = insert(Position).values({"position_title": "CEO"})
             stmt_2 = insert(Role).values({"role": "admin"})
             stmt_3 = insert(Role).values({"role": "user"})
             await session.execute(stmt_1)

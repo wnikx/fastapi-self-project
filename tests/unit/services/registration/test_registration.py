@@ -3,6 +3,7 @@ import pytest
 from src.services.registration import (
     add_account_with_invite_token,
     check_free_email,
+    check_position,
     check_validation,
     email_free,
     finalize_registration,
@@ -57,6 +58,18 @@ async def test_check_validation(check_invite_row, delete_all_the_invites, add_in
     assert result_row == fake_row
 
     await delete_all_the_invites()
+
+
+async def test_check_position(add_position_and_role, delete_all_position_and_role):
+    await add_position_and_role()
+
+    position_id = await check_position()
+    assert position_id == 1
+    await delete_all_position_and_role()
+
+    new_position_id = await check_position()
+    assert new_position_id == 1
+    await delete_all_position_and_role()
 
 
 async def test_finalize_registration(add_position_and_role, delete_all_position_and_role):

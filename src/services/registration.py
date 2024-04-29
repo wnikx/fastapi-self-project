@@ -66,7 +66,7 @@ async def check_free_email(email: CheckEmailSchema) -> bool:
         return False
 
 
-async def check_position() -> bool:
+async def check_position() -> int:
     async with async_session_maker() as session:
         stmt = select(Position).filter_by(position_title="CEO")
         query = await session.execute(stmt)
@@ -82,7 +82,7 @@ async def check_position() -> bool:
             return new_pos
 
 
-async def check_role() -> bool:
+async def check_role() -> int:
     async with async_session_maker() as session:
         stmt = select(Role).filter_by(role="admin")
         query = await session.execute(stmt)
