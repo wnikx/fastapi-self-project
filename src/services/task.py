@@ -8,7 +8,7 @@ from src.schemas.task import TaskSchema
 from src.utils.jwt import get_user_from_token
 
 
-async def create_task(new_task_sheme: TaskSchema, token: str):
+async def create_task(new_task_sheme: TaskSchema, token: str) -> bool:
     user = get_user_from_token(token)
     if user["role"] == "admin":
         async with async_session_maker() as session:
