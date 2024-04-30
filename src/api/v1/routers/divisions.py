@@ -6,6 +6,7 @@ from src.services.division import (
     add_new_divsion_service,
     add_new_position_service,
     change_position_sevice,
+    delete_position_sevice,
 )
 
 division_router = APIRouter(prefix="/division/api/v1", tags=["Division manage"])
@@ -29,4 +30,11 @@ async def add_new_position(data: AddNewPositionShema, token: token_dep):
 async def change_position(position_id: int, data: AddNewPositionShema, token: token_dep):
     changed_position = await change_position_sevice(position_id, data, token.credentials)
     if changed_position:
+        return Response(status_code=200)
+
+
+@division_router.delete("/delete-position/{position_id}")
+async def delete_position(position_id: int, token: token_dep):
+    position_deleted = await delete_position_sevice(position_id, token.credentials)
+    if position_deleted:
         return Response(status_code=200)
