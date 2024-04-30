@@ -3,7 +3,7 @@ from sqlalchemy import delete, func, select, update
 
 from src.database.database import async_session_maker
 from src.models import Position, StructAdmPositions
-from src.schemas.division import AddNewDivisionSchema, AddNewPositionShema
+from src.schemas.division import AddNewDivisionSchema, AddNewPositionShema, AddNewSupervisor
 from src.services.manage_employee import check_position
 from src.utils.jwt import get_user_from_token
 
@@ -59,7 +59,7 @@ async def add_new_position_service(data: AddNewPositionShema, token: str):
     )
 
 
-async def change_position_sevice(position_id: int, data: AddNewPositionShema, token):
+async def change_position_service(position_id: int, data: AddNewPositionShema, token):
     user = get_user_from_token(token)
     if user["role"] == "admin":
         async with async_session_maker() as session:
@@ -85,6 +85,30 @@ async def delete_position_sevice(position_id: int, token: str):
             if pos:
                 new_stmt = delete(Position).filter_by(id=position_id)
                 await session.execute(new_stmt)
+                await session.commit()
+                return True
+            raise HTTPException(detail="Position does not exist", status_code=404)
+    raise HTTPException(
+        detail="You do not have sufficient rights to use this resource",
+        status_code=403,
+    )
+
+
+async def add_supervisor_service(division_id: int, data: AddNewSupervisor, token: str):
+    user = get_user_from_token(token)
+    if user["role"] == "admin":
+        async with async_session_maker() as session:
+            stmt = select(StructAdmPositions).filter_by(id=division_id)
+            pos = (await session.execute(stmt)).scalar()
+            if pos and pos.note != "CEO":
+                stmt = select(func.count()).select_from(StructAdmPositions)
+                count_divs = (await session.execute(stmt)).scalar()
+                new_supervisor = StructAdmPositions(
+                    id=count_divs + 1,
+                    note=data.new_supervisor,
+                    parent=pos,
+                )
+                session.add(new_supervisor)
                 await session.commit()
                 return True
             raise HTTPException(detail="Position does not exist", status_code=404)

@@ -5,8 +5,8 @@ from src.schemas.division import AddNewDivisionSchema, AddNewPositionShema, AddN
 from src.services.division import (
     add_new_divsion_service,
     add_new_position_service,
-    change_position_sevice,
-    created_new_supervisor_supervisor,
+    add_supervisor_service,
+    change_position_service,
     delete_position_sevice,
 )
 
@@ -29,7 +29,7 @@ async def add_new_position(data: AddNewPositionShema, token: token_dep):
 
 @division_router.patch("/change-position/{position_id}")
 async def change_position(position_id: int, data: AddNewPositionShema, token: token_dep):
-    changed_position = await change_position_sevice(position_id, data, token.credentials)
+    changed_position = await change_position_service(position_id, data, token.credentials)
     if changed_position:
         return Response(status_code=200)
 
@@ -41,9 +41,9 @@ async def delete_position(position_id: int, token: token_dep):
         return Response(status_code=200)
 
 
-@division_router.post("/add-supervisor")
+@division_router.post("/add-supervisor/{division_id}")
 async def add_supervisor(division_id: int, data: AddNewSupervisor, token: token_dep):
-    created_new_supervisor = await created_new_supervisor_supervisor(
+    created_new_supervisor = await add_supervisor_service(
         division_id,
         data,
         token.credentials,
