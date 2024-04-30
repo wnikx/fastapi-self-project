@@ -1,8 +1,8 @@
 from fastapi import HTTPException
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 
 from src.database.database import async_session_maker
-from src.models import StructAdmPositions
+from src.models import Position, StructAdmPositions
 from src.schemas.division import AddNewDivisionSchema, AddNewPositionShema
 from src.services.manage_employee import check_position
 from src.utils.jwt import get_user_from_token
@@ -53,6 +53,23 @@ async def add_new_position_service(data: AddNewPositionShema, token: str):
     if user["role"] == "admin":
         await check_position(data.new_position)
         return True
+    raise HTTPException(
+        detail="You do not have sufficient rights to use this resource",
+        status_code=403,
+    )
+
+
+async def change_position_sevice(position_id: int, data: AddNewPositionShema, token):
+    user = get_user_from_token(token)
+    if user["role"] == "admin":
+        async with async_session_maker() as session:
+            stmt = select(Position).filter_by(id=position_id)
+            pos = (await session.execute(stmt)).scalar()
+            if pos:
+                pos.position_title = data.new_position
+                await session.commit()
+                return True
+            raise HTTPException(detail="Position does not exist", status_code=404)
     raise HTTPException(
         detail="You do not have sufficient rights to use this resource",
         status_code=403,
