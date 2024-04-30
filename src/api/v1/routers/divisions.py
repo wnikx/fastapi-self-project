@@ -19,3 +19,10 @@ async def add_new_position(data: AddNewPositionShema, token: token_dep):
     created_new_position = await add_new_position_service(data, token.credentials)
     if created_new_position:
         return Response(status_code=200)
+
+
+@division_router.patch("/change-position")
+async def change_position(data: AddNewPositionShema, token: token_dep):
+    changed_position = await change_position_sevice(data, token.credentials)
+    if changed_position:
+        return Response(status_code=200)
