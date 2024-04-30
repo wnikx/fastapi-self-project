@@ -18,6 +18,7 @@ from fakes.services.registration.fake_registration import (
 from fakes.services.registration.fake_user import fake_users_schemas
 from fakes.services.task.fake_task_data import fake_task_schema
 from fakes.services.verify.verify_fake_data import fake_company, fake_login_schema, fake_user
+from tests.fakes.services.division.fake_division_data import fake_new_position_schema
 
 __all__ = [
     "fake_email_schemas",
@@ -38,4 +39,5 @@ __all__ = [
     "fake_check_email_schema",
     "fake_new_name_schema",
     "fake_task_schema",
+    "fake_new_position_schema",
 ]
