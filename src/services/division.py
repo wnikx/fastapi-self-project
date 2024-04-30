@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy import func, select, update
+from sqlalchemy import delete, func, select, update
 
 from src.database.database import async_session_maker
 from src.models import Position, StructAdmPositions
@@ -67,6 +67,24 @@ async def change_position_sevice(position_id: int, data: AddNewPositionShema, to
             pos = (await session.execute(stmt)).scalar()
             if pos:
                 pos.position_title = data.new_position
+                await session.commit()
+                return True
+            raise HTTPException(detail="Position does not exist", status_code=404)
+    raise HTTPException(
+        detail="You do not have sufficient rights to use this resource",
+        status_code=403,
+    )
+
+
+async def delete_position_sevice(position_id: int, token: str):
+    user = get_user_from_token(token)
+    if user["role"] == "admin":
+        async with async_session_maker() as session:
+            stmt = select(Position).filter_by(id=position_id)
+            pos = (await session.execute(stmt)).scalar()
+            if pos:
+                new_stmt = delete(Position).filter_by(id=position_id)
+                await session.execute(new_stmt)
                 await session.commit()
                 return True
             raise HTTPException(detail="Position does not exist", status_code=404)
