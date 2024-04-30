@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Response
 
 from src import token_dep
-from src.schemas.division import AddNewDivisionSchema, AddNewPositionShema
+from src.schemas.division import AddNewDivisionSchema, AddNewPositionShema, AddNewSupervisor
 from src.services.division import (
     add_new_divsion_service,
     add_new_position_service,
     change_position_sevice,
+    created_new_supervisor_supervisor,
     delete_position_sevice,
 )
 
@@ -37,4 +38,15 @@ async def change_position(position_id: int, data: AddNewPositionShema, token: to
 async def delete_position(position_id: int, token: token_dep):
     position_deleted = await delete_position_sevice(position_id, token.credentials)
     if position_deleted:
+        return Response(status_code=200)
+
+
+@division_router.post("/add-supervisor")
+async def add_supervisor(division_id: int, data: AddNewSupervisor, token: token_dep):
+    created_new_supervisor = await created_new_supervisor_supervisor(
+        division_id,
+        data,
+        token.credentials,
+    )
+    if created_new_supervisor:
         return Response(status_code=200)

@@ -7,3 +7,7 @@ class AddNewDivisionSchema(BaseModel):
 
 class AddNewPositionShema(BaseModel):
     new_position: str
+
+
+class AddNewSupervisor(BaseModel):
+    new_supervisor: str
