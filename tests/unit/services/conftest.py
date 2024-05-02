@@ -93,6 +93,9 @@ async def add_ceo_position(async_session_maker):
         async with async_session_maker() as session:
             fake_ceo_position = StructAdmPositions(id=1, note="CEO")
             session.add(fake_ceo_position)
+            await session.flush()
+            fake_div = StructAdmPositions(id=2, note="test_dep", parent=fake_ceo_position)
+            session.add(fake_div)
             await session.commit()
 
     return _add_row
