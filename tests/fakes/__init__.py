@@ -20,6 +20,7 @@ from fakes.services.task.fake_task_data import fake_task_schema
 from fakes.services.verify.verify_fake_data import fake_company, fake_login_schema, fake_user
 from tests.fakes.services.division.fake_division_data import (
     TEST_ADD_SUPERVISOR_SERVICE,
+    TEST_CHANGE_DIVISION_NAME_SERVICE_PARAMS,
     TEST_CHANGE_POSITION_PARAMS,
     TEST_DELETE_POSITION_PARAMS,
     fake_new_position_schema,
@@ -47,5 +48,6 @@ __all__ = [
     "fake_new_position_schema",
     "TEST_CHANGE_POSITION_PARAMS",
     "TEST_DELETE_POSITION_PARAMS",
+    "TEST_CHANGE_DIVISION_NAME_SERVICE_PARAMS",
     "TEST_ADD_SUPERVISOR_SERVICE",
 ]
