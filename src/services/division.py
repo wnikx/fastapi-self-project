@@ -116,3 +116,7 @@ async def add_supervisor_service(division_id: int, data: AddNewSupervisor, token
         detail="You do not have sufficient rights to use this resource",
         status_code=403,
     )
+
+
+async def change_division_name_service(division_id: int, data: AddNewDivisionSchema, token: str):
+    pass

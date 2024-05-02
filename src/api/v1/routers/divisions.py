@@ -6,6 +6,7 @@ from src.services.division import (
     add_new_divsion_service,
     add_new_position_service,
     add_supervisor_service,
+    change_division_name_service,
     change_position_service,
     delete_position_sevice,
 )
@@ -49,4 +50,11 @@ async def add_supervisor(division_id: int, data: AddNewSupervisor, token: token_
         token.credentials,
     )
     if created_new_supervisor:
+        return Response(status_code=200)
+
+
+@division_router.patch("/change-division-name/{division_id}")
+async def change_division_name(division_id: int, data: AddNewDivisionSchema, token: token_dep):
+    division_name_changed = await change_division_name_service(division_id, data, token.credentials)
+    if division_name_changed:
         return Response(status_code=200)
