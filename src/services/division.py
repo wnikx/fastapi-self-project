@@ -133,3 +133,21 @@ async def change_division_name_service(division_id: int, data: AddNewDivisionSch
         detail="You do not have sufficient rights to use this resource",
         status_code=403,
     )
+
+
+async def delete_division_service(division_id: int, token: str):
+    user = get_user_from_token(token)
+    if user["role"] == "admin":
+        async with async_session_maker() as session:
+            stmt = select(StructAdmPositions).filter_by(id=division_id)
+            pos = (await session.execute(stmt)).scalar()
+            if pos and pos.note != "CEO":
+                new_stmt = delete(StructAdmPositions).filter_by(id=division_id)
+                await session.execute(new_stmt)
+                await session.commit()
+                return True
+            raise HTTPException(detail="Position does not exist", status_code=404)
+    raise HTTPException(
+        detail="You do not have sufficient rights to use this resource",
+        status_code=403,
+    )
