@@ -6,12 +6,14 @@ from src.services.division import (
     change_division_name_service,
     change_position_service,
     check_ceo_exist,
+    delete_division_service,
     delete_position_sevice,
 )
 from tests.fakes import (
     TEST_ADD_SUPERVISOR_SERVICE,
     TEST_CHANGE_DIVISION_NAME_SERVICE_PARAMS,
     TEST_CHANGE_POSITION_PARAMS,
+    TEST_DELETE_DIVISION_PARAMS,
     TEST_DELETE_POSITION_PARAMS,
     fake_new_position_schema,
 )
@@ -91,5 +93,22 @@ async def test_change_division_name_service(
     with expectation:
         change_name = await change_division_name_service(div_id, data, fake_token)
         assert change_name == True
+
+    await delete_ceo_position()
+
+
+@pytest.mark.parametrize("div_id, expectation", TEST_DELETE_DIVISION_PARAMS)
+async def test_delete_division_service(
+    div_id,
+    expectation,
+    add_ceo_position,
+    delete_ceo_position,
+    fake_token,
+):
+    await add_ceo_position()
+
+    with expectation:
+        del_div = await delete_division_service(div_id, fake_token)
+        assert del_div == True
 
     await delete_ceo_position()

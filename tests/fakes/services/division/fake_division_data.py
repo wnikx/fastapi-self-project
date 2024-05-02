@@ -29,3 +29,8 @@ TEST_CHANGE_DIVISION_NAME_SERVICE_PARAMS = [
     (1, AddNewDivisionSchema(division_title="fake_div"), pytest.raises(HTTPException)),
     (99, AddNewDivisionSchema(division_title="fake_div"), pytest.raises(HTTPException)),
 ]
+TEST_DELETE_DIVISION_PARAMS = [
+    (2, does_not_raise()),
+    (99, pytest.raises(HTTPException)),
+    (1, pytest.raises(HTTPException)),
+]
