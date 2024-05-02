@@ -119,4 +119,17 @@ async def add_supervisor_service(division_id: int, data: AddNewSupervisor, token
 
 
 async def change_division_name_service(division_id: int, data: AddNewDivisionSchema, token: str):
-    pass
+    user = get_user_from_token(token)
+    if user["role"] == "admin":
+        async with async_session_maker() as session:
+            stmt = select(StructAdmPositions).filter_by(id=division_id)
+            pos = (await session.execute(stmt)).scalar()
+            if pos and pos.note != "CEO":
+                pos.note = data.division_title
+                await session.commit()
+                return True
+            raise HTTPException(detail="Position does not exist", status_code=404)
+    raise HTTPException(
+        detail="You do not have sufficient rights to use this resource",
+        status_code=403,
+    )
